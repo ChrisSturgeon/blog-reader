@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './MobileSidebar.css';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
 
 export default function MobileSidebar({ navOpen, toggleNav }) {
   const [test, setTest] = useState(false);
 
-  useEffect(() => {
-    console.log(test);
-  }, [test]);
+  useEffect(() => {}, [test]);
   return (
     <div className={navOpen ? 'mobile-sidebar out' : 'mobile-sidebar'}>
       <p>I'm the mobile sidebar</p>
