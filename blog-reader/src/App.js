@@ -1,34 +1,46 @@
 import logo from './logo.svg';
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+
+import useCheckMobileScreen from './Hooks/useWindowDimensions';
+
+// Component imports
+import Sidebar from './Components/Sidebar/Sidebar';
+import MobileSidebar from './Components/MobileSidebar/MobileSidebar';
+import MobileNavbar from './Components/MobileNavbar/MobileNavbar';
+import Home from './Components/Home/Home';
+import Summaries from './Components/Summaries/Summaries';
+import Post from './Components/Post/Post';
+import NotFound from './Components/NotFound/NotFound';
 
 function App() {
-  const [test, setTest] = useState(['one', 'two', 'three']);
-  const [posts, setPosts] = useState([]);
+  const [navOpen, setNavOpen] = useState(false);
+  const isMobile = useCheckMobileScreen();
 
-  useEffect(() => {
-    const getPosts = async () => {
-      console.log('Yeah boy');
-      const allPosts = await fetch('http://localhost:3000/posts/all');
-      const data = await allPosts.json();
-      setPosts(data.posts);
-      console.log(data.posts);
-    };
-    getPosts();
-  }, []);
+  // Toggles mobile side navbar open/closed
+  const toggleNav = () => {
+    setNavOpen(!navOpen);
+  };
 
   return (
-    <div>
-      {posts
-        ? posts.map((post) => {
-            return (
-              <div key={post._id}>
-                <h1>{post.title}</h1>
-                <p>{post.content}</p>
-              </div>
-            );
-          })
-        : 'Not loaded'}
+    <div className="column-wrapper">
+      {isMobile ? (
+        <>
+          <MobileNavbar toggleNav={toggleNav} />
+          <MobileSidebar navOpen={navOpen} toggleNav={toggleNav} />
+        </>
+      ) : (
+        <Sidebar />
+      )}
+
+      <Routes>
+        <Route path="/" element={<Home isMobile={isMobile} />} />
+        <Route path="/posts/all" element={<Summaries />} />
+        <Route path="/posts/:postId" element={<Post />} />
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </div>
   );
 }
